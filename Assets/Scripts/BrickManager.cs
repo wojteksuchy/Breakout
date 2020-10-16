@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class BrickManager : MonoBehaviour
 {
-    private static GameManager instance;
+    private static BrickManager instance;
 
-    public static GameManager Instance => instance;
+    public static BrickManager Instance => instance;
 
     private void Awake()
     {
@@ -20,10 +20,8 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public bool IsGameStarted { get; set; }
+    public Sprite[] Sprites;
 
-    private void Start()
-    {
-        Screen.SetResolution(540, 960, false);
-    }
+
+
 }

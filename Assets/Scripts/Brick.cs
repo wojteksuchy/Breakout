@@ -13,13 +13,16 @@ public class Brick : MonoBehaviour
     private SpriteRenderer spriteRenderer;
 
     public ParticleSystem DystroyEffect;
-    public int HitPoint = 1;
+    public int HitPoints = 1;
 
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
-
+    private void Start()
+    {
+        spriteRenderer.sprite = BrickManager.Instance.Sprites[HitPoints - 1];
+    }
     private void OnCollisionEnter2D(Collision2D collision)
     {
         Ball ball = collision.gameObject.GetComponent<Ball>();
@@ -28,8 +31,8 @@ public class Brick : MonoBehaviour
 
     private void CollisionLogic(Ball ball)
     {
-        HitPoint--;
-        if (HitPoint <=0)
+        HitPoints--;
+        if (HitPoints <=0)
         {
             BrickDestroyed?.Invoke(this);
             BrickDestroyEffect();
@@ -37,7 +40,7 @@ public class Brick : MonoBehaviour
         }
         else
         {
-            //TODO: Change visual
+            spriteRenderer.sprite = BrickManager.Instance.Sprites[HitPoints - 1];
         }
     }
 
@@ -77,7 +80,7 @@ public class Brick : MonoBehaviour
         
         Color color = new Color32((byte)(r / total), (byte)(g / total), (byte)(b / total), 0);
         color.a = 1;
-        Debug.Log(color);
+        
         return color;
 
     }
