@@ -84,4 +84,13 @@ public class Brick : MonoBehaviour
         return color;
 
     }
+
+    internal void Init(Transform continerTransform, Sprite sprite, Color color, int hitPoints)
+    {
+        transform.SetParent(continerTransform);
+        spriteRenderer.sprite = sprite;
+        spriteRenderer.color = color;
+        HitPoints = hitPoints;
+
+    }
 }
