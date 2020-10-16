@@ -21,7 +21,7 @@ public class Brick : MonoBehaviour
     }
     private void Start()
     {
-        spriteRenderer.sprite = BrickManager.Instance.Sprites[HitPoints - 1]; // delegat ??
+        //spriteRenderer.sprite = BrickManager.Instance.Sprites[HitPoints - 1]; // delegat ??
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
