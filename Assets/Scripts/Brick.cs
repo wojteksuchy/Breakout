@@ -2,15 +2,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.ParticleSystem;
 
 public class Brick : MonoBehaviour
 {
-    public delegate void OnBrickDestruction(Brick brick);
-    public static event OnBrickDestruction BrickDestroyed;
-    //public static event Action<Brick> BrickDestroyed;
+    //public delegate Brick OnBrickDestruction(Brick brick);
+    //public static event OnBrickDestruction BrickDestroyed;
+    public static event Action<Brick> BrickDestroyed;
 
+    private SpriteRenderer spriteRenderer;
+
+    public ParticleSystem DystroyEffect;
     public int HitPoint = 1;
 
+    private void Awake()
+    {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+    }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -24,12 +32,53 @@ public class Brick : MonoBehaviour
         if (HitPoint <=0)
         {
             BrickDestroyed?.Invoke(this);
-            //TODO: Add destroy effect
+            BrickDestroyEffect();
             Destroy(gameObject);
         }
         else
         {
             //TODO: Change visual
         }
+    }
+
+    private void BrickDestroyEffect()
+    {
+        Vector3 brickPosition = gameObject.transform.position;
+        Vector3 spawnPosition = new Vector3(brickPosition.x, brickPosition.y, brickPosition.z - 0.2f);
+        GameObject effect = Instantiate(DystroyEffect.gameObject, spawnPosition, Quaternion.identity);
+
+        MainModule mainModule = effect.GetComponent<ParticleSystem>().main;
+        mainModule.startColor = AverageColorFromTexture(spriteRenderer.sprite.texture);
+        Destroy(effect, mainModule.startLifetime.constant);
+    }
+
+    private Color AverageColorFromTexture(Texture2D tex)
+    {
+
+        Color32[] texColors = tex.GetPixels32();
+
+        int total = texColors.Length;
+
+        float r = 0;
+        float g = 0;
+        float b = 0;
+
+        for (int i = 0; i < total; i++)
+        {
+
+            r += texColors[i].r;
+
+            g += texColors[i].g;
+
+            b += texColors[i].b;
+
+        }
+
+        
+        Color color = new Color32((byte)(r / total), (byte)(g / total), (byte)(b / total), 0);
+        color.a = 1;
+        Debug.Log(color);
+        return color;
+
     }
 }
