@@ -742,7 +742,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &657736421
 Transform:
   m_ObjectHideFlags: 0
@@ -1030,6 +1030,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be8205e667709734a93ad99379b319a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+<<<<<<< Updated upstream
+=======
+  CurrentLevel: 2
+  Bricks:
+  - {fileID: 11400000, guid: 627fa8fcb9f7cac43877a63c0ed45fe7, type: 2}
+  - {fileID: 11400000, guid: 156c364b0dcdf3a409481289d7784cb0, type: 2}
+  - {fileID: 11400000, guid: e4c4d96204f96d24faba015a17e2246e, type: 2}
+>>>>>>> Stashed changes
   Sprites:
   - {fileID: 21300000, guid: 9691babd5ec92b641a5a6fedbea79f4a, type: 3}
   - {fileID: 21300000, guid: 7e4b6f27a95dd024c92a4ff1deebd73a, type: 3}

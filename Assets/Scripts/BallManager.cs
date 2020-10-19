@@ -39,18 +39,18 @@ public class BallManager : MonoBehaviour
     private void Update()
     {
         //if game is not started make ball position at paddle
-        if (!GameManager.Instance.IsGameStarted)
-        {
-            Vector3 paddlePosition = Paddle.Instance.gameObject.transform.position;
-            Vector3 ballPosition = new Vector3(paddlePosition.x, paddlePosition.y + yOffset, 0);
-            ball.transform.position = ballPosition;
-            if (Input.GetMouseButtonDown(0))
-            {
-                ballRB.isKinematic = false;
-                ballRB.AddForce(new Vector2(0, BallSpeed));
-                GameManager.Instance.IsGameStarted = true;
-            }
-        }
+        //if (!GameManager.Instance.IsGameStarted)
+        //{
+        //    Vector3 paddlePosition = Paddle.Instance.gameObject.transform.position;
+        //    Vector3 ballPosition = new Vector3(paddlePosition.x, paddlePosition.y + yOffset, 0);
+        //    ball.transform.position = ballPosition;
+        //    if (Input.GetMouseButtonDown(0))
+        //    {
+        //        ballRB.isKinematic = false;
+        //        ballRB.AddForce(new Vector2(0, BallSpeed));
+        //        GameManager.Instance.IsGameStarted = true;
+        //    }
+        //}
         
     }
 
