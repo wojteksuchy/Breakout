@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameManager : MonoBehaviour
+public class GameManager : Singleton<GameManager>
 {
-
+    
     //what level the game is curently in
     //load and unload game levels
     //keep track of game states
@@ -64,25 +64,7 @@ public class GameManager : MonoBehaviour
         asyncOperation.completed += OnUnloadSceneCompleted;
         currentSceneName = sceneName;
     }
-
     
-
-    //private static GameManager instance;
-
-    //public static GameManager Instance => instance;
-
-    //private void Awake()
-    //{
-    //    if (instance != null)
-    //    {
-    //        Destroy(gameObject);
-    //    }
-    //    else
-    //    {
-    //        instance = this;
-    //    }
-    //}
-
     public bool IsGameStarted { get; set; }
 
     
