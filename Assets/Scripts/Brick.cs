@@ -14,14 +14,14 @@ public class Brick : MonoBehaviour
 
     public ParticleSystem DystroyEffect;
     public int HitPoints = 1;
-
+    
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
     private void Start()
     {
-        spriteRenderer.sprite = BrickManager.Instance.Sprites[HitPoints - 1]; // delegat ??
+        //spriteRenderer.sprite = BrickManager.Instance.Sprites[HitPoints - 1]; // delegat ??
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -40,7 +40,7 @@ public class Brick : MonoBehaviour
         }
         else
         {
-            spriteRenderer.sprite = BrickManager.Instance.Sprites[HitPoints - 1];
+            spriteRenderer.sprite = BrickManager.Instance.Bricks[HitPoints - 1].Sprites[HitPoints - 1];
         }
     }
 

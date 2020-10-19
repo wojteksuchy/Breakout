@@ -30,6 +30,7 @@ public class BrickManager : MonoBehaviour
     private GameObject bricksContainer;
 
     public List<int[,]> LevelData { get; set; }
+    public List<BrickData> Bricks;
     public Sprite[] Sprites;
     public Brick brickPrefab;
     public Color[] BrickColors;
@@ -41,10 +42,12 @@ public class BrickManager : MonoBehaviour
 
     private void Start()
     {
+        
         bricksContainer = new GameObject("Brick Container");
         RemaningBricks = new List<Brick>();
         LevelData = LoadLevelData();
         GenerateBricks();
+
 
     }
 
@@ -96,7 +99,7 @@ public class BrickManager : MonoBehaviour
                 if (brickType > 0)
                 {
                     Brick newBrick = Instantiate(brickPrefab, new Vector3(currentSpawnX, currentSpawnY, 0.0f - zShift), Quaternion.identity) as Brick;
-                    newBrick.Init(bricksContainer.transform, Sprites[brickType - 1], BrickColors[brickType], brickType);
+                    newBrick.Init(bricksContainer.transform, Bricks[brickType - 1].Sprites[brickType - 1], BrickColors[brickType], Bricks[brickType - 1].HitPoints);
 
                     RemaningBricks.Add(newBrick);
                     zShift += 0.0001f;
