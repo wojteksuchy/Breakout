@@ -1,19 +1,19 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
 {
-    
+
     //what level the game is curently in
     //load and unload game levels
     //keep track of game states
     //generate other persistent systems
+    public GameObject[] SystemPrefabs; // Array of system prefabs to be created
 
-
+    private List<GameObject> instancedSystemPrefabs; // List of created system prefabs
     private List<AsyncOperation> loadOperations;
+
     private string currentSceneName = string.Empty;
 
     private void Start()
@@ -21,10 +21,23 @@ public class GameManager : Singleton<GameManager>
         DontDestroyOnLoad(gameObject);
         loadOperations = new List<AsyncOperation>();
         Screen.SetResolution(540, 960, false);
-        LoadScene("Game") ;
+        LoadScene("Game");
     }
 
-    private void OnLoadSceneCompleted(AsyncOperation asyncOperation )
+    private void InstantiateSystemPrefabs()
+    {
+        GameObject prefabInstance;
+
+        for (int i = 0; i < SystemPrefabs.Length; i++)
+        {
+            prefabInstance = Instantiate(SystemPrefabs[i]);
+            instancedSystemPrefabs.Add(prefabInstance);
+        }
+    }
+
+    
+
+    private void OnLoadSceneCompleted(AsyncOperation asyncOperation)
     {
         if (loadOperations.Contains(asyncOperation))
         {
@@ -52,9 +65,10 @@ public class GameManager : Singleton<GameManager>
         currentSceneName = sceneName;
     }
 
-    
 
-    public void UnloadScene(string sceneName) {
+
+    public void UnloadScene(string sceneName)
+    {
         AsyncOperation asyncOperation = SceneManager.UnloadSceneAsync(sceneName);
         if (asyncOperation == null)
         {
@@ -64,8 +78,19 @@ public class GameManager : Singleton<GameManager>
         asyncOperation.completed += OnUnloadSceneCompleted;
         currentSceneName = sceneName;
     }
-    
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        for (int i = 0; i < instancedSystemPrefabs.Count; i++)
+        {
+            Destroy(instancedSystemPrefabs[i]);
+
+        }
+        instancedSystemPrefabs.Clear();
+    }
+
     public bool IsGameStarted { get; set; }
 
-    
+
 }
