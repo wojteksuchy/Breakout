@@ -1,6 +1,10 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Events;
+
+
+[System.Serializable]public class EventGameState: UnityEvent<GameManager.GameState, GameManager.GameState> { }
 
 public class GameManager : Singleton<GameManager>
 {
@@ -9,6 +13,7 @@ public class GameManager : Singleton<GameManager>
     //load and unload game levels
     //keep track of game states
     //generate other persistent systems
+    public EventGameState OnGameStateChanged;
 
     public enum GameState
     {
@@ -20,10 +25,10 @@ public class GameManager : Singleton<GameManager>
     private GameState currentGameState = GameState.Pregame;
 
 
-    public GameState CurrentGameState
+    public GameState GetCurrentGameState
     {
         get { return currentGameState; }
-        set { currentGameState = value; }
+        private set { currentGameState = value; }
     }
 
     public GameObject[] SystemPrefabs; // Array of system prefabs to be created
@@ -40,7 +45,7 @@ public class GameManager : Singleton<GameManager>
         loadOperations = new List<AsyncOperation>();
         Screen.SetResolution(540, 960, false);
         InstantiateSystemPrefabs();
-        LoadScene("Game");
+        //LoadScene("Game");
     }
 
     private void InstantiateSystemPrefabs()
@@ -56,6 +61,7 @@ public class GameManager : Singleton<GameManager>
 
     private void UpdateState(GameState state)
     {
+        GameState previousGameState = currentGameState;
         currentGameState = state;
 
         switch (currentGameState)
@@ -69,6 +75,8 @@ public class GameManager : Singleton<GameManager>
             default:
                 break;
         }
+
+        OnGameStateChanged?.Invoke(currentGameState, previousGameState);
     }
 
     private void OnLoadSceneCompleted(AsyncOperation asyncOperation)
@@ -76,7 +84,11 @@ public class GameManager : Singleton<GameManager>
         if (loadOperations.Contains(asyncOperation))
         {
             loadOperations.Remove(asyncOperation);
-            //TODO: Transition between scenes
+            if (loadOperations.Count == 0)
+            {
+                UpdateState(GameState.Running);
+            }
+            
         }
         Debug.Log("Scene load completed");
     }
@@ -123,6 +135,12 @@ public class GameManager : Singleton<GameManager>
         }
         instancedSystemPrefabs.Clear();
     }
+
+    public void StartGame()
+    {
+        LoadScene("Game");
+    }
+
 
     public bool IsGameStarted { get; set; }
 

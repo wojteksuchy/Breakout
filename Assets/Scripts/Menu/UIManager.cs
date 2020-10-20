@@ -9,9 +9,14 @@ public class UIManager : Singleton<UIManager>
 
     private void Update()
     {
+        if (GameManager.Instance.GetCurrentGameState != GameManager.GameState.Pregame)
+        {
+            return;
+        }
         if (Input.GetMouseButtonDown(0))
         {
-            mainMenu.FadeOut();
+            //mainMenu.FadeOut();
+            GameManager.Instance.StartGame();
         }
     }
 
