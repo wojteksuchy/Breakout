@@ -19,6 +19,13 @@ public class GameManager : Singleton<GameManager>
 
     private GameState currentGameState = GameState.Pregame;
 
+
+    public GameState CurrentGameState
+    {
+        get { return currentGameState; }
+        set { currentGameState = value; }
+    }
+
     public GameObject[] SystemPrefabs; // Array of system prefabs to be created
 
     private List<GameObject> instancedSystemPrefabs; // List of created system prefabs
