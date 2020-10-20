@@ -19,8 +19,10 @@ public class GameManager : Singleton<GameManager>
     private void Start()
     {
         DontDestroyOnLoad(gameObject);
+        instancedSystemPrefabs = new List<GameObject>();
         loadOperations = new List<AsyncOperation>();
         Screen.SetResolution(540, 960, false);
+        InstantiateSystemPrefabs();
         LoadScene("Game");
     }
 
