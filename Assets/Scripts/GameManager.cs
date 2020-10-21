@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+
 using UnityEngine.SceneManagement;
-using UnityEngine.Events;
 
 
-[System.Serializable]public class EventGameState: UnityEvent<GameManager.GameState, GameManager.GameState> { }
+
 
 public class GameManager : Singleton<GameManager>
 {
@@ -13,7 +14,7 @@ public class GameManager : Singleton<GameManager>
     //load and unload game levels
     //keep track of game states
     //generate other persistent systems
-    public EventGameState OnGameStateChanged;
+    public Events.EventGameState OnGameStateChanged;
 
     public enum GameState
     {
@@ -31,13 +32,14 @@ public class GameManager : Singleton<GameManager>
         private set { currentGameState = value; }
     }
 
+    
+
     public GameObject[] SystemPrefabs; // Array of system prefabs to be created
 
     private List<GameObject> instancedSystemPrefabs; // List of created system prefabs
     private List<AsyncOperation> loadOperations;
 
     private string currentSceneName = string.Empty;
-
     private void Start()
     {
         DontDestroyOnLoad(gameObject);
@@ -45,9 +47,23 @@ public class GameManager : Singleton<GameManager>
         loadOperations = new List<AsyncOperation>();
         Screen.SetResolution(540, 960, false);
         InstantiateSystemPrefabs();
+        UIManager.Instance.OnMainMenuFadeComplete.AddListener(HandleMainMenuFadeComplete);
         //LoadScene("Game");
     }
 
+   
+
+    private void Update()
+    {
+        if (currentGameState == GameManager.GameState.Pregame)
+        {
+            return;
+        }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            TogglePause();
+        }
+    }
     private void InstantiateSystemPrefabs()
     {
         GameObject prefabInstance;
@@ -58,7 +74,6 @@ public class GameManager : Singleton<GameManager>
             instancedSystemPrefabs.Add(prefabInstance);
         }
     }
-
     private void UpdateState(GameState state)
     {
         GameState previousGameState = currentGameState;
@@ -67,10 +82,13 @@ public class GameManager : Singleton<GameManager>
         switch (currentGameState)
         {
             case GameState.Pregame:
+                Time.timeScale = 1.0f;
                 break;
             case GameState.Running:
+                Time.timeScale = 1.0f;
                 break;
             case GameState.Paused:
+                Time.timeScale = 0.0f;
                 break;
             default:
                 break;
@@ -78,7 +96,6 @@ public class GameManager : Singleton<GameManager>
 
         OnGameStateChanged?.Invoke(currentGameState, previousGameState);
     }
-
     private void OnLoadSceneCompleted(AsyncOperation asyncOperation)
     {
         if (loadOperations.Contains(asyncOperation))
@@ -88,16 +105,21 @@ public class GameManager : Singleton<GameManager>
             {
                 UpdateState(GameState.Running);
             }
-            
+
         }
         Debug.Log("Scene load completed");
     }
-
     private void OnUnloadSceneCompleted(AsyncOperation obj)
     {
         Debug.Log("Scene unload completed");
     }
-
+    private void HandleMainMenuFadeComplete(bool fadeOut)
+    {
+        if (!fadeOut)
+        {
+            UnloadScene(currentSceneName);
+        }
+    }
     public void LoadScene(string sceneName)
     {
         AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
@@ -110,9 +132,6 @@ public class GameManager : Singleton<GameManager>
         loadOperations.Add(asyncOperation);
         currentSceneName = sceneName;
     }
-
-
-
     public void UnloadScene(string sceneName)
     {
         AsyncOperation asyncOperation = SceneManager.UnloadSceneAsync(sceneName);
@@ -124,7 +143,6 @@ public class GameManager : Singleton<GameManager>
         asyncOperation.completed += OnUnloadSceneCompleted;
         currentSceneName = sceneName;
     }
-
     protected override void OnDestroy()
     {
         base.OnDestroy();
@@ -135,12 +153,24 @@ public class GameManager : Singleton<GameManager>
         }
         instancedSystemPrefabs.Clear();
     }
-
     public void StartGame()
     {
         LoadScene("Game");
     }
+    public void TogglePause()
+    {
+        UpdateState(currentGameState == GameState.Running ? GameState.Paused : GameState.Running);
+    }
+    public void RestartGame()
+    {
+        UpdateState(GameState.Pregame);
+    }
 
+    public void QuitGame()
+    {
+        //TODO ask 
+        Application.Quit();
+    }
 
     public bool IsGameStarted { get; set; }
 
