@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-
 using UnityEngine.SceneManagement;
-
-
-
 
 public class GameManager : Singleton<GameManager>
 {
@@ -25,14 +21,11 @@ public class GameManager : Singleton<GameManager>
 
     private GameState currentGameState = GameState.Pregame;
 
-
     public GameState GetCurrentGameState
     {
         get { return currentGameState; }
         private set { currentGameState = value; }
     }
-
-    
 
     public GameObject[] SystemPrefabs; // Array of system prefabs to be created
 
@@ -40,6 +33,8 @@ public class GameManager : Singleton<GameManager>
     private List<AsyncOperation> loadOperations;
 
     private string currentSceneName = string.Empty;
+
+
     private void Start()
     {
         DontDestroyOnLoad(gameObject);
@@ -50,8 +45,6 @@ public class GameManager : Singleton<GameManager>
         UIManager.Instance.OnMainMenuFadeComplete.AddListener(HandleMainMenuFadeComplete);
         //LoadScene("Game");
     }
-
-   
 
     private void Update()
     {
@@ -64,6 +57,7 @@ public class GameManager : Singleton<GameManager>
             TogglePause();
         }
     }
+
     private void InstantiateSystemPrefabs()
     {
         GameObject prefabInstance;
@@ -74,6 +68,7 @@ public class GameManager : Singleton<GameManager>
             instancedSystemPrefabs.Add(prefabInstance);
         }
     }
+
     private void UpdateState(GameState state)
     {
         GameState previousGameState = currentGameState;
@@ -96,6 +91,7 @@ public class GameManager : Singleton<GameManager>
 
         OnGameStateChanged?.Invoke(currentGameState, previousGameState);
     }
+
     private void OnLoadSceneCompleted(AsyncOperation asyncOperation)
     {
         if (loadOperations.Contains(asyncOperation))
@@ -109,10 +105,12 @@ public class GameManager : Singleton<GameManager>
         }
         Debug.Log("Scene load completed");
     }
+
     private void OnUnloadSceneCompleted(AsyncOperation obj)
     {
         Debug.Log("Scene unload completed");
     }
+
     private void HandleMainMenuFadeComplete(bool fadeOut)
     {
         if (!fadeOut)
@@ -120,6 +118,7 @@ public class GameManager : Singleton<GameManager>
             UnloadScene(currentSceneName);
         }
     }
+
     public void LoadScene(string sceneName)
     {
         AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
@@ -132,6 +131,7 @@ public class GameManager : Singleton<GameManager>
         loadOperations.Add(asyncOperation);
         currentSceneName = sceneName;
     }
+
     public void UnloadScene(string sceneName)
     {
         AsyncOperation asyncOperation = SceneManager.UnloadSceneAsync(sceneName);
@@ -143,6 +143,7 @@ public class GameManager : Singleton<GameManager>
         asyncOperation.completed += OnUnloadSceneCompleted;
         currentSceneName = sceneName;
     }
+
     protected override void OnDestroy()
     {
         base.OnDestroy();
@@ -157,10 +158,12 @@ public class GameManager : Singleton<GameManager>
     {
         LoadScene("Game");
     }
+
     public void TogglePause()
     {
         UpdateState(currentGameState == GameState.Running ? GameState.Paused : GameState.Running);
     }
+
     public void RestartGame()
     {
         UpdateState(GameState.Pregame);
